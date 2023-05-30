@@ -148,8 +148,6 @@ var
   C: Char;
   WCBSize: DWord;
 begin
-  if ClipboardSize = 0 then
-    Exit;
   if CheckWinClipboard then
   begin
     OpenWinClipboard;
@@ -164,6 +162,8 @@ begin
       CloseWinClipboard;
     end;
   end;
+  if ClipboardSize = 0 then
+    Exit;
   for I := 0 to ClipboardSize - 1 do
   begin
     C := ClipboardPtr[I];
