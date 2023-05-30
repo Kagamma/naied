@@ -170,6 +170,8 @@ begin
     if C = #10 then
       Editor.HandleEnter
     else
+    if C = #13 then
+    else
       Editor.HandleInsert(C);
   end;
 end;
