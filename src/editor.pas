@@ -42,6 +42,7 @@ var
   ActualSelStartIndex,
   ActualSelEndIndex: Word;
   IsDirDown: Boolean;
+  Highlight: Byte = 3;
 
 procedure Run;
 procedure GetActualSel;
@@ -472,6 +473,17 @@ begin
         Result := not CheckForSelect;
         if Result then
           HandlePageUp;
+      end;
+    SCAN_H:
+      begin
+        if IsCtrl(KBFlags) and IsShift(KBFlags) then
+        begin
+          Highlight := Highlight + 1;
+          if Highlight > 3 then
+            Highlight := 0;
+          IsRefreshEdit := True;
+        end else
+          goto Other;
       end;
     SCAN_V:
       begin

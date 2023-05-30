@@ -190,14 +190,17 @@ begin
       Continue;
     end;
     L := Length(P^.Text);
-    TrailingSpacePos := L + 1;
-    I := L;
-    while P^.Text[I] = ' ' do
+    if Highlight and 2 <> 0 then
     begin
-      TrailingSpacePos := I;
-      Dec(I);
-      if I = 0 then
-        Break;
+      TrailingSpacePos := L + 1;
+      I := L;
+      while P^.Text[I] = ' ' do
+      begin
+        TrailingSpacePos := I;
+        Dec(I);
+        if I = 0 then
+          Break;
+      end;
     end;
     for I := 0 to ScreenWidth - 1 do
     begin
@@ -207,10 +210,10 @@ begin
       else
       begin
         C := P^.Text[K];
-        if K >= TrailingSpacePos then
+        if (Highlight and 2 <> 0) and (K >= TrailingSpacePos) then
           Attr := AttrTrailing
         else
-        if not (C in [' ', 'A'..'Z', 'a'..'z', '0'..'9']) then
+        if (Highlight and 1 <> 0) and not (C in [' ', 'A'..'Z', 'a'..'z', '0'..'9']) then
           Attr := AttrHighlight
         else
           Attr := AttrNormal;
