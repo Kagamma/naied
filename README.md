@@ -7,7 +7,7 @@ A small text editor for DOS real mode, written in Free Pascal for msdos-8086. Th
 - Strings larger than 255 bytes (thanks to Free Pascal again, although we limit it to 16KB)
 - Handle file bigger than 64KB
 - Highlight symbols and trailing spaces
-- Common navigation methods: Arrows key to move cursor, Ctrl-C/V/X for Cut/Copy/Paste, and selecting blocks of text with Shift+Arrow keys, Ctrl-S to save the file
+- Common navigation methods: Arrows key to move cursor, Ctrl-C/V/X for Cut/Copy/Paste, selecting blocks of text with Shift+Arrow keys, Ctrl-S to save the file, Esc to quit the editor
 - 32KB clipboard with support for Windows clipboard
 
 ### Limitations
