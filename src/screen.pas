@@ -14,6 +14,11 @@ var
   Offset       : Word = 0;
   CursorX      : ShortInt = 0;
   CursorY      : ShortInt = 1;
+  AttrStatus   : Word = $1700;
+  AttrNormal   : Word = $0700;
+  AttrHighlight: Word = $0E00;
+  AttrTrailing : Word = $4700;
+  AttrSelect   : Word = $7000;
 
 procedure SetMode80x50;
 procedure SetMode80x25;
@@ -74,7 +79,7 @@ begin
   Result := Min(ScreenWidth - 1, X + Length(S) - 1);
   for I := X to Result do
   begin
-    ScreenPointer[Y * ScreenWidth + I] := $1F00 + Byte(S[J]);
+    ScreenPointer[Y * ScreenWidth + I] := AttrStatus + Byte(S[J]);
     Inc(J);
   end;
 end;
@@ -87,7 +92,7 @@ begin
   Result := Max(0, X - Length(S) + 1);
   for I := Result to X do
   begin
-    ScreenPointer[Y * ScreenWidth + I] := $1F00 + Byte(S[J]);
+    ScreenPointer[Y * ScreenWidth + I] := AttrStatus + Byte(S[J]);
     Inc(J);
   end;
 end;
@@ -100,7 +105,7 @@ begin
   P := ScreenWidth - 4;
   for I := OldStatusCursorPosition to P do
   begin
-    ScreenPointer[I] := $1600;
+    ScreenPointer[I] := AttrStatus;
   end;
   Str(EditorY, S);
   P := RenderTextAtRight(P, 0, S) - 1;
@@ -175,7 +180,7 @@ begin
   begin
     if P = nil then
     begin
-      FillWord(ScreenPointer[J * ScreenWidth], ScreenWidth, $0700);
+      FillWord(ScreenPointer[J * ScreenWidth], ScreenWidth, AttrNormal);
       Continue;
     end;
     L := Length(P^.Text);
@@ -192,24 +197,24 @@ begin
     begin
       K := Offset + I + 1;
       if K > L then
-        ScreenPointer[J * ScreenWidth + I] := $0700
+        ScreenPointer[J * ScreenWidth + I] := AttrNormal
       else
       begin
         C := P^.Text[K];
         if K >= TrailingSpacePos then
-          Attr := $4700
+          Attr := AttrTrailing
         else
         if not (C in [' ', 'A'..'Z', 'a'..'z', '0'..'9']) then
-          Attr := $0E00
+          Attr := AttrHighlight
         else
-          Attr := $0700;
+          Attr := AttrNormal;
         if SelStart <> nil then
         begin
           if ((J > SelStartRow) and (J < SelEndRow)) or
              ((J = SelStartRow) and (J <> SelEndRow) and (K > ActualSelStartIndex)) or
              ((J <> SelStartRow) and (J = SelEndRow) and (K <= ActualSelEndIndex)) or
              ((J = SelStartRow) and (J = SelEndRow) and (K > ActualSelStartIndex) and (K <= ActualSelEndIndex)) then
-            Attr := $7000;
+            Attr := AttrSelect;
         end;
         ScreenPointer[J * ScreenWidth + I] := Attr + Byte(C);
       end;
@@ -220,7 +225,7 @@ end;
 
 procedure Render;
 begin
-  FillWord(ScreenPointer[0], ScreenWidth * ScreenHeight, $0700);
+  FillWord(ScreenPointer[0], ScreenWidth * ScreenHeight, AttrNormal);
   SetCursorPosition(CursorX, CursorY);
   RenderStatusBar;
   RenderEdit;
