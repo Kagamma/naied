@@ -73,6 +73,11 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="Clipboard"/>
       </Unit>
+      <Unit>
+        <Filename Value="commands.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Commands"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

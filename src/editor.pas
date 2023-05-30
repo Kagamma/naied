@@ -51,7 +51,7 @@ procedure HandleEnter;
 implementation
 
 uses
-  Files, Clipboard;
+  Files, Clipboard, Commands;
 
 var
   KBInput: TKeyboardInput;
@@ -588,7 +588,7 @@ label
   Again;
 begin
   KBInput.Data := 0;
-  while KBInput.ScanCode <> SCAN_ESC do
+  while True do
   begin
     IsRefreshStatusCursor := False;
     IsRefreshStatusMode := False;
@@ -599,6 +599,9 @@ begin
       KBInput.Data := Keyboard.GetKey;
       KBFlags := Keyboard.GetFlags;
     Again:
+      if KBInput.ScanCode = SCAN_ESC then
+        CommandQuit
+      else
       case EditorMode of
         emInsert,
         emReplace:

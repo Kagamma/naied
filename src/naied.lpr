@@ -3,7 +3,7 @@ program naied;
 {$I naied.inc}
 
 uses
-  Dos, Memory, Globals, Screen, Editor, Keyboard, Files, Clipboard;
+  Dos, Memory, Globals, Screen, Editor, Keyboard, Files, Clipboard, Commands;
 
 var
   I: Integer;

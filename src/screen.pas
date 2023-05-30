@@ -25,6 +25,7 @@ procedure SetMode80x25;
 procedure SetCursorPosition(const X, Y: Byte);
 function RenderTextAtLeft(const X, Y: Byte; const S: String): Byte;
 function RenderTextAtRight(const X, Y: Byte; const S: String): Byte;
+procedure RenderStatusBarBlank;
 procedure RenderStatusBar;
 procedure RenderStatusMode;
 procedure RenderStatusCursor;
@@ -135,14 +136,19 @@ begin
   RenderTextAtLeft(0, 0, WorkingFile);
 end;
 
-procedure RenderStatusBar;
+procedure RenderStatusBarBlank;
 var
-  I: Byte;
+  I: Integer;
 begin
   for I := 0 to ScreenWidth - 1 do
   begin
-    ScreenPointer[I] := $1F00;
+    ScreenPointer[I] := AttrStatus;
   end;
+end;
+
+procedure RenderStatusBar;
+begin
+  RenderStatusBarBlank;
   RenderStatusCursor;
   RenderStatusMode;
   RenderStatusFile;
