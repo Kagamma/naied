@@ -1,6 +1,6 @@
 ### NaiED
 
-A small text editor for DOS real mode, written in Free Pascal for msdos-8086. The project is meant to bring back memories of the old DOS days.
+A small text editor for DOS real mode, written in Free Pascal. The project is meant to bring back memories of the old DOS days.
 
 ### Features
 - Supports Long File Names (thanks to Free Pascal)
