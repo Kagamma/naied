@@ -6,6 +6,7 @@
 *.so
 *.lps
 *.tmp
+*.zip
 link*.res
 lib
 ppas.sh
