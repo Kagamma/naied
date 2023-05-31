@@ -614,7 +614,7 @@ begin
       begin
         if IsCtrl(KBFlags) then
         begin
-          CommandSearch(False, IsShift(KBFlags));
+          CommandReplace(False, IsShift(KBFlags));
         end else
           goto Other;
       end;
