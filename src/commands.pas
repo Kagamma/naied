@@ -81,7 +81,7 @@ begin
       ScreenPointer[CursorX] := AttrStatus;
     end
     else
-    if (I < 50) and (Input.CharCode in [#32..'z']) then
+    if (I < 50) and (Input.CharCode in [#32..#126]) then
     begin
       S := S + Input.CharCode;
       ScreenPointer[CursorX] := AttrStatus + Byte(Input.CharCode);

@@ -662,7 +662,7 @@ begin
               HandleInsert(' ');
               HandleInsert(' ');
             end;
-          #32..'z':
+          #32..#126:
             HandleInsert(KBInput.CharCode);
         end;
       end;
