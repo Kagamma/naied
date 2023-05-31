@@ -123,6 +123,7 @@ begin
   // Look for current 
   Loop := 0;
   N := Memory.First;
+  P := N;
   while Loop <> Y do
   begin
     Inc(Loop);
