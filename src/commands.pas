@@ -4,8 +4,14 @@ unit Commands;
 
 interface
 
+const
+  COMMAND_SEARCH_INS = 1;
+  COMMAND_SEARCH_SEN = 2;
+  COMMAND_REPLACE_INS = 3;
+  COMMAND_REPLACE_SEN = 4;
+
 var
-  LastCommand: String = 'search';
+  LastCommand: Word = 0;
 
 function CommandQuit: Char;
 procedure CommandSearch(const IsSilent, IsCaseSensitive: Boolean);
@@ -91,7 +97,10 @@ begin
   RestoreCursor;
   if InputBuffer1 <> '' then
   begin
-    LastCommand := 'search';
+    if IsCaseSensitive then
+      LastCommand := COMMAND_SEARCH_SEN
+    else
+      LastCommand := COMMAND_SEARCH_INS;
     InputBuffer1 := InputBuffer1;
     if not Editor.SearchForText(InputBuffer1, IsCaseSensitive) then
     begin
@@ -123,7 +132,10 @@ begin
       WriteCommand('With: ');
       Readln(InputBuffer2);
     end;
-    LastCommand := 'replace';
+    if IsCaseSensitive then
+      LastCommand := COMMAND_REPLACE_SEN
+    else
+      LastCommand := COMMAND_REPLACE_INS;
     InputBuffer1 := InputBuffer1;
     InputBuffer2 := InputBuffer2;
     if not Editor.SearchForText(InputBuffer1, IsCaseSensitive) then

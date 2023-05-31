@@ -72,12 +72,13 @@ var
   Loop: Integer = 0;
 begin
   P := Current;
-  if not IsCaseSensitive then
+  if IsCaseSensitive then
+    Ind := Pos(S, P^.Text)
+  else
   begin
     S := UpCase(S);
     Ind := Pos(S, UpCase(P^.Text));
-  end else
-    Ind := Pos(S, P^.Text);
+  end;
   if (P = Current) and (EditorX = Ind) then
     Ind := 0;
   while (Ind < 1) and (P <> nil) do
@@ -85,7 +86,10 @@ begin
     P := P^.Next;
     if P <> nil then
     begin
-      Ind := Pos(S, UpCase(P^.Text));
+      if IsCaseSensitive then
+        Ind := Pos(S, P^.Text)
+      else
+        Ind := Pos(S, UpCase(P^.Text));
       if (P = Current) and (EditorX = Ind) then
         Ind := 0;
       Inc(Loop);
@@ -583,19 +587,25 @@ begin
       end;
     SCAN_F3:
       begin
-        if LastCommand = 'search' then
-          CommandSearch(True, False);
+        if LastCommand = COMMAND_SEARCH_INS then
+          CommandSearch(True, False)
+        else
+        if LastCommand = COMMAND_SEARCH_SEN then
+          CommandSearch(True, True);
       end;  
     SCAN_F4:
       begin
-        if LastCommand = 'replace' then
-          CommandReplace(True, False);
+        if LastCommand = COMMAND_REPLACE_INS then
+          CommandReplace(True, False)
+        else
+        if LastCommand = COMMAND_REPLACE_SEN then
+          CommandReplace(True, True);
       end;
     SCAN_F:
       begin
         if IsCtrl(KBFlags) then
         begin
-          CommandSearch(False, False);
+          CommandSearch(False, IsShift(KBFlags));
         end else
           goto Other;
       end;
@@ -603,7 +613,7 @@ begin
       begin
         if IsCtrl(KBFlags) then
         begin
-          CommandReplace(False, False);
+          CommandSearch(False, IsShift(KBFlags));
         end else
           goto Other;
       end;
