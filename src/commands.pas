@@ -125,6 +125,7 @@ begin
     end;
     LastCommand := 'replace';
     InputBuffer1 := InputBuffer1;
+    InputBuffer2 := InputBuffer2;
     if not Editor.SearchForText(InputBuffer1, IsCaseSensitive) then
     begin
       BackupCursor;

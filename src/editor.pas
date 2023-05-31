@@ -589,7 +589,7 @@ begin
     SCAN_F4:
       begin
         if LastCommand = 'replace' then
-          CommandSearch(True, False);
+          CommandReplace(True, False);
       end;
     SCAN_F:
       begin
