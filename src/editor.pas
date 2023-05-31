@@ -50,10 +50,11 @@ var
 procedure Run;
 procedure GetActualSel;
 procedure HandleInsert(const C: Char);
+procedure HandleDeleteRight;
 procedure HandleEnter;       
 procedure HandleHome;
 procedure MoveTo(const X, Y: Integer);
-function SearchForText(const S: String): Boolean;
+function SearchForText(S: String; const IsCaseSensitive: Boolean): Boolean;
 
 implementation
 
@@ -64,14 +65,19 @@ var
   KBInput: TKeyboardInput;
   KBFlags: Byte;
 
-function SearchForText(const S: String): Boolean;
+function SearchForText(S: String; const IsCaseSensitive: Boolean): Boolean;
 var
   P: PMemoryBlock;
   Ind: Integer;
   Loop: Integer = 0;
 begin
   P := Current;
-  Ind := Pos(S, UpCase(P^.Text));
+  if not IsCaseSensitive then
+  begin
+    S := UpCase(S);
+    Ind := Pos(S, UpCase(P^.Text));
+  end else
+    Ind := Pos(S, P^.Text);
   if (P = Current) and (EditorX = Ind) then
     Ind := 0;
   while (Ind < 1) and (P <> nil) do
@@ -578,13 +584,26 @@ begin
     SCAN_F3:
       begin
         if LastCommand = 'search' then
-          CommandSearch(True);
+          CommandSearch(True, False);
+      end;  
+    SCAN_F4:
+      begin
+        if LastCommand = 'replace' then
+          CommandSearch(True, False);
       end;
     SCAN_F:
       begin
         if IsCtrl(KBFlags) then
         begin
-          CommandSearch(False);
+          CommandSearch(False, False);
+        end else
+          goto Other;
+      end;
+    SCAN_R:
+      begin
+        if IsCtrl(KBFlags) then
+        begin
+          CommandReplace(False, False);
         end else
           goto Other;
       end;

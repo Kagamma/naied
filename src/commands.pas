@@ -2,16 +2,14 @@ unit Commands;
 
 {$I naied.inc}
 
-interface 
-
-type
-  TCommandFunc = function(const IsSilent: Boolean): Char;
+interface
 
 var
   LastCommand: String = 'search';
 
 function CommandQuit: Char;
-function CommandSearch(const IsSilent: Boolean): Char;
+procedure CommandSearch(const IsSilent, IsCaseSensitive: Boolean);
+procedure CommandReplace(const IsSilent, IsCaseSensitive: Boolean);
 
 implementation
 
@@ -82,7 +80,7 @@ begin
   end;
 end;
 
-function CommandSearch(const IsSilent: Boolean): Char;
+procedure CommandSearch(const IsSilent, IsCaseSensitive: Boolean);
 begin
   BackupCursor;
   if not IsSilent then
@@ -94,8 +92,8 @@ begin
   if InputBuffer1 <> '' then
   begin
     LastCommand := 'search';
-    InputBuffer1 := UpCase(InputBuffer1);
-    if not Editor.SearchForText(InputBuffer1) then
+    InputBuffer1 := InputBuffer1;
+    if not Editor.SearchForText(InputBuffer1, IsCaseSensitive) then
     begin
       BackupCursor;
       WriteCommand('Text not found!');
@@ -104,6 +102,49 @@ begin
     end;
   end;
   Screen.RenderStatusBar;
+  Screen.RenderEdit;
+end;
+
+procedure CommandReplace(const IsSilent, IsCaseSensitive: Boolean);
+var
+  I: Word;
+begin
+  BackupCursor;
+  if not IsSilent then
+  begin
+    WriteCommand('Replace: ');
+    Readln(InputBuffer1);
+  end;
+  RestoreCursor;
+  if InputBuffer1 <> '' then
+  begin
+    if not IsSilent then
+    begin
+      WriteCommand('With: ');
+      Readln(InputBuffer2);
+    end;
+    LastCommand := 'replace';
+    InputBuffer1 := InputBuffer1;
+    if not Editor.SearchForText(InputBuffer1, IsCaseSensitive) then
+    begin
+      BackupCursor;
+      WriteCommand('Text not found!');
+      Keyboard.WaitForInput;
+      RestoreCursor;
+    end else
+    begin
+      for I := 1 to Length(InputBuffer1) do
+      begin
+        Editor.HandleDeleteRight;
+      end;      
+      for I := 1 to Length(InputBuffer2) do
+      begin
+        Editor.HandleInsert(InputBuffer2[I]);
+      end;
+    end;
+  end;
+  Screen.RenderStatusBar;
+  Screen.RenderEdit;
 end;
 
 end.

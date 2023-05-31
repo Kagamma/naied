@@ -6,9 +6,11 @@ A small text editor for DOS real mode, written in Free Pascal. The project is me
 - Supports Long File Names (thanks to Free Pascal)
 - Strings larger than 255 bytes (thanks to Free Pascal, although we limit it to 16KB)
 - Handle file bigger than 64KB
-- Highlight symbols and trailing spaces, enable / disable it by using `Ctrl-Shift-H`
-- Common navigation methods: Arrow keys to move cursor, `Ctrl-C/V/X` for Cut/Copy/Paste, selecting blocks of text with `Shift+Arrow keys`, `Ctrl-S` to save the file, `Esc` to quit the editor
+- Highlight symbols and trailing spaces, enable / disable it by pressing `Ctrl-Shift-H`
 - 32KB clipboard with support for Windows clipboard
+- Common navigation methods: Arrow keys to move cursor, `Ctrl-C/V/X` for Copy/Paste/Cut, selecting blocks of text with `Shift+Arrow keys`, `Ctrl-S` to save the file, `Esc` to quit the editor
+- Search: `Ctrl-F`, `F3` for search next.
+- Replace: `Ctrl-R`, `F4` for replace next.
 
 ### Limitations
 - No undo/redo functionality
