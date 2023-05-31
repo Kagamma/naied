@@ -28,7 +28,7 @@ begin
   {$I-}
   Reset(F);
   {$I+}
-  Screen.RenderStatusBar;
+  Screen.RenderStatusBarBlank;
   if IOResult = 0 then
   begin
     Memory.Init;
@@ -54,6 +54,7 @@ begin
   end;
   Screen.RenderStatusBar;
   WorkingFile := Path;
+  Editor.MoveTo(1, 100);
 end;
 
 procedure Save;
@@ -67,6 +68,7 @@ begin
   Rewrite(F);
   M := Memory.First;
   B := WorkingFile;
+  Screen.RenderStatusBarBlank;
   while M <> nil do
   begin
     if I mod 100 = 0 then

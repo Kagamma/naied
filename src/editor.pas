@@ -43,11 +43,17 @@ var
   ActualSelEndIndex: Word;
   IsDirDown: Boolean;
   Highlight: Byte = 3;
+  IsRefreshStatusMode: Boolean;
+  IsRefreshStatusCursor: Boolean;
+  IsRefreshEdit: Boolean;
 
 procedure Run;
 procedure GetActualSel;
 procedure HandleInsert(const C: Char);
-procedure HandleEnter;
+procedure HandleEnter;       
+procedure HandleHome;
+procedure MoveTo(const X, Y: Integer);
+function SearchForText(const S: String): Boolean;
 
 implementation
 
@@ -57,9 +63,104 @@ uses
 var
   KBInput: TKeyboardInput;
   KBFlags: Byte;
-  IsRefreshStatusMode: Boolean;
-  IsRefreshStatusCursor: Boolean;
-  IsRefreshEdit: Boolean;
+
+function SearchForText(const S: String): Boolean;
+var
+  P: PMemoryBlock;
+  Ind: Integer;
+  Loop: Integer = 0;
+begin
+  P := Current;
+  Ind := Pos(S, UpCase(P^.Text));
+  if (P = Current) and (EditorX = Ind) then
+    Ind := 0;
+  while (Ind < 1) and (P <> nil) do
+  begin
+    P := P^.Next;
+    if P <> nil then
+    begin
+      Ind := Pos(S, UpCase(P^.Text));
+      if (P = Current) and (EditorX = Ind) then
+        Ind := 0;
+      Inc(Loop);
+    end;
+  end;
+  if P <> nil then
+  begin
+    Current := P;
+    MoveTo(Ind, EditorY + Loop);
+    Result := True;
+  end else
+  begin
+    Result := False
+  end;
+end;
+
+procedure MoveTo(const X, Y: Integer);
+var
+  Loop,
+  CornerLeft,
+  CornerTop,
+  CornerRight,
+  CornerBottom: Integer;
+  P, N: PMemoryBlock;
+begin
+  // TODO: Remove this in the future
+  HandleHome;
+  // quit because Y is larger than EditorY's max value
+  if Y > Memory.Total then
+    Exit;
+  // Look for current 
+  Loop := 0;
+  N := Memory.First;
+  while Loop <> Y do
+  begin
+    Inc(Loop);
+    P := N;
+    N := P^.Next;
+  end;
+  Current := P;
+  // Find the actual corners
+  CornerLeft := EditorX - CursorX;
+  CornerTop := EditorY - CursorY + 1;
+  CornerRight := CornerLeft + ScreenWidth;
+  CornerBottom := CornerTop + ScreenHeight + 1;
+  EditorX := X;
+  EditorY := Y;
+  CursorX := X - CornerLeft;
+  CursorY := Y - CornerTop + 1;
+  // Check to see if X and Y are within the current view, if yes, just move
+  // the cursor and exit
+  if (X < CornerLeft) or (X >= CornerRight) or (Y < CornerTop) or (Y >= CornerBottom) then
+  begin
+    // X and Y are not within view, so we need to scroll things
+    if X < CornerLeft then
+      CursorX := 0
+    else
+    if X >= CornerRight then
+    begin
+      CursorX := ScreenWidth - 1;
+      Offset := X - ScreenWidth;
+    end;
+    if Y < CornerTop then
+      CursorY := 0
+    else
+    if Y >= CornerBottom then
+      CursorY := ScreenHeight - 1;
+
+    IsRefreshEdit := True;
+  end;
+  // Look for view
+  CornerTop := EditorY - CursorY + 1;
+  while Loop <> CornerTop do
+  begin
+    P := P^.Prev;
+    Dec(Loop);
+  end;
+  View := P;
+  IsRefreshStatusCursor := True;
+  Screen.SetCursorPosition(CursorX, CursorY);
+end;
 
 procedure GetActualSel;
 begin
@@ -474,6 +575,19 @@ begin
         if Result then
           HandlePageUp;
       end;
+    SCAN_F3:
+      begin
+        if LastCommand = 'search' then
+          CommandSearch(True);
+      end;
+    SCAN_F:
+      begin
+        if IsCtrl(KBFlags) then
+        begin
+          CommandSearch(False);
+        end else
+          goto Other;
+      end;
     SCAN_H:
       begin
         if IsCtrl(KBFlags) and IsShift(KBFlags) then
@@ -606,27 +720,24 @@ begin
     IsRefreshStatusMode := False;
     IsRefreshEdit := False;
 
-    if Keyboard.IsPressed then
-    begin
-      KBInput.Data := Keyboard.GetKey;
-      KBFlags := Keyboard.GetFlags;
-    Again:
-      if KBInput.ScanCode = SCAN_ESC then
-        CommandQuit
-      else
-      case EditorMode of
-        emInsert,
-        emReplace:
-          begin
-            if not HandleKeyboardEdit then
-              goto Again;
-          end;
-        emSelect:
-          begin
-            if not HandleKeyboardSelect then
-              goto Again;
-          end;
-      end;
+    KBInput.Data := Keyboard.WaitForInput;
+    KBFlags := Keyboard.GetFlags;
+  Again:
+    if KBInput.ScanCode = SCAN_ESC then
+      CommandQuit
+    else
+    case EditorMode of
+      emInsert,
+      emReplace:
+        begin
+          if not HandleKeyboardEdit then
+            goto Again;
+        end;
+      emSelect:
+        begin
+          if not HandleKeyboardSelect then
+            goto Again;
+        end;
     end;
 
     Screen.SetCursorPosition(CursorX, CursorY);

@@ -2,9 +2,16 @@ unit Commands;
 
 {$I naied.inc}
 
-interface
+interface 
+
+type
+  TCommandFunc = function(const IsSilent: Boolean): Char;
+
+var
+  LastCommand: String = 'search';
 
 function CommandQuit: Char;
+function CommandSearch(const IsSilent: Boolean): Char;
 
 implementation
 
@@ -12,21 +19,36 @@ uses
   Editor, Memory, Screen, Files, Keyboard;
 
 var
+  InputBuffer: String;
+  IsCursorBackup: Boolean = False;
   OldCursorX,
   OldCursorY: ShortInt;
 
+procedure WriteCommand(const S: String);
+begin                        
+  Screen.RenderStatusBarBlank;
+  Screen.SetCursorPosition(0, 0);
+  Write(S);
+end;
+
 procedure BackupCursor;
 begin
+  if IsCursorBackup then
+    Exit;
   OldCursorX := CursorX;
   OldCursorY := CursorY;
   Screen.SetCursorPosition(0, 0);
+  IsCursorBackup := True;
 end;
 
 procedure RestoreCursor;
-begin
+begin 
+  if not IsCursorBackup then
+    Exit;
   CursorX := OldCursorX;
   CursorY := OldCursorY;
   Screen.SetCursorPosition(CursorX, CursorY);
+  IsCursorBackup := False;
 end;
 
 function CommandQuit: Char;
@@ -34,12 +56,10 @@ begin
   if Editor.Modified then
   begin  
     Result := ' ';
-    Screen.RenderStatusBarBlank;
     BackupCursor;
-    Write('Save before quit? (Y/N/C)');
+    WriteCommand('Save before quit? (Y/N/C)');
     repeat
-      if Keyboard.IsPressed then
-        Result := TKeyboardInput(Keyboard.GetKey).CharCode;
+      Result := TKeyboardInput(Keyboard.WaitForInput).CharCode;
     until Result in ['y', 'n', 'c'];
     RestoreCursor;
     Screen.RenderStatusBar;
@@ -58,6 +78,30 @@ begin
         Halt;
       end;
   end;
+end;
+
+function CommandSearch(const IsSilent: Boolean): Char;
+begin
+  BackupCursor;
+  if not IsSilent then
+  begin
+    WriteCommand('Search: ');
+    Readln(InputBuffer);
+  end;
+  RestoreCursor;
+  if InputBuffer <> '' then
+  begin
+    LastCommand := 'search';
+    InputBuffer := UpCase(InputBuffer);
+    if not Editor.SearchForText(InputBuffer) then
+    begin
+      BackupCursor;
+      WriteCommand('Text not found!');
+      Keyboard.WaitForInput;
+      RestoreCursor;
+    end;
+  end;
+  Screen.RenderStatusBar;
 end;
 
 end.

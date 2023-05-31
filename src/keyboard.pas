@@ -154,7 +154,7 @@ type
       );
   end;
               
-function IsPressed: Boolean;
+function WaitForInput: Word;
 function GetKey: Word;
 function GetFlags: Byte;
 function IsCtrl(const Flags: Byte): Boolean;
@@ -169,15 +169,15 @@ uses
 var
   OldCtrlBreakHandle: Pointer;
 
-function IsPressed: Boolean; assembler; nostackframe;
+function WaitForInput: Word; assembler; nostackframe;
 asm
-  mov ax,$1100
+  mov ax,$1000
   int $16
 end;
 
 function GetKey: Word; assembler; nostackframe;
 asm
-  mov ax,$1000
+  mov ax,$1100
   int $16
 end;
 
