@@ -147,6 +147,7 @@ var
   I: Integer;
   C: Char;
   WCBSize: DWord;
+  S: String;
 begin
   if CheckWinClipboard then
   begin
@@ -168,12 +169,17 @@ begin
   begin
     C := ClipboardPtr[I];
     if C = #10 then
-      Editor.HandleEnter
-    else
-    if C = #13 then
-    else
-      Editor.HandleInsert(C);
+    begin
+      if S <> '' then
+        Editor.HandleInsertString(S);
+      Editor.HandleEnter;
+      S := '';
+    end else
+    if C <> #13 then
+      S := S + C;
   end;
+  if S <> '' then
+    Editor.HandleInsertString(S);
 end;
 
 initialization

@@ -50,6 +50,7 @@ var
 procedure Run;
 procedure GetActualSel;
 procedure HandleInsert(const C: Char);
+procedure HandleInsertString(const S: String);
 procedure HandleDeleteRight;
 procedure HandleEnter;       
 procedure HandleHome;
@@ -370,6 +371,21 @@ begin
     AdjustTextSize(Current, EditorX - 1);
   System.Insert(C, Current^.Text, EditorX);
   HandleRight;
+  Modified := True;
+  IsRefreshStatusMode := True;
+  IsRefreshEdit := True;
+end;
+
+procedure HandleInsertString(const S: String);
+var
+  Size, I: Word;
+begin
+  Size := Length(Memory.Current^.Text);
+  if Size < EditorX - 1 then
+    AdjustTextSize(Current, EditorX - 1);
+  System.Insert(S, Current^.Text, EditorX);
+  for I := 1 to Length(S) do
+    HandleRight;
   Modified := True;
   IsRefreshStatusMode := True;
   IsRefreshEdit := True;
