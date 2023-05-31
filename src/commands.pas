@@ -30,13 +30,6 @@ var
   OldCursorX,
   OldCursorY: ShortInt;
 
-procedure WriteCommand(const S: String);
-begin
-  Screen.RenderStatusBarBlank;
-  Screen.SetCursorPosition(0, 0);
-  Write(S);
-end;
-
 procedure BackupCursor;
 begin
   if IsCursorBackup then
@@ -48,13 +41,62 @@ begin
 end;
 
 procedure RestoreCursor;
-begin 
+begin
   if not IsCursorBackup then
     Exit;
   CursorX := OldCursorX;
   CursorY := OldCursorY;
   Screen.SetCursorPosition(CursorX, CursorY);
   IsCursorBackup := False;
+end;
+
+procedure WriteCommand(const S: String);
+begin
+  Screen.RenderStatusBarBlank;
+  Screen.SetCursorPosition(0, 0);
+  Write(S);
+  CursorX := Length(S);
+end;
+
+function ReadCommand(var S: String): Boolean;
+var
+  Input: TKeyboardInput;
+  I: Byte = 0;
+begin
+  S := '';
+  while True do
+  begin
+    Input.Data := Keyboard.WaitForInput;
+    if Input.ScanCode = SCAN_ESC then
+      Exit(False)
+    else
+    if Input.ScanCode = SCAN_ENTER then
+      Exit(True)
+    else
+    if (Input.ScanCode = SCAN_BS) and (I > 0) then
+    begin
+      SetLength(S, I - 1);
+      Dec(I);
+      Dec(CursorX);
+      ScreenPointer[CursorX] := AttrStatus;
+    end
+    else
+    if (I < 50) and (Input.CharCode in [#32..'z']) then
+    begin
+      S := S + Input.CharCode;
+      ScreenPointer[CursorX] := AttrStatus + Byte(Input.CharCode);
+      Inc(I);
+      Inc(CursorX);
+    end;
+    Screen.SetCursorPosition(CursorX, 0);
+  end;
+end;
+
+procedure FinishCommand;
+begin
+  RestoreCursor;
+  Screen.RenderStatusBar;
+  Screen.RenderEdit;
 end;
 
 function CommandQuit: Char;
@@ -92,26 +134,27 @@ begin
   if not IsSilent then
   begin
     WriteCommand('Search: ');
-    Readln(InputBuffer1);
+    if not ReadCommand(InputBuffer1) then
+    begin
+      FinishCommand;
+      Exit;
+    end;
   end;
-  RestoreCursor;
   if InputBuffer1 <> '' then
   begin
     if IsCaseSensitive then
       LastCommand := COMMAND_SEARCH_SEN
     else
       LastCommand := COMMAND_SEARCH_INS;
-    InputBuffer1 := InputBuffer1;
+    RestoreCursor;
     if not Editor.SearchForText(InputBuffer1, IsCaseSensitive) then
     begin
       BackupCursor;
       WriteCommand('Text not found!');
       Keyboard.WaitForInput;
-      RestoreCursor;
     end;
   end;
-  Screen.RenderStatusBar;
-  Screen.RenderEdit;
+  FinishCommand;
 end;
 
 procedure CommandReplace(const IsSilent, IsCaseSensitive: Boolean);
@@ -122,30 +165,36 @@ begin
   if not IsSilent then
   begin
     WriteCommand('Replace: ');
-    Readln(InputBuffer1);
+    if not ReadCommand(InputBuffer1) then
+    begin
+      FinishCommand;
+      Exit;
+    end;
   end;
-  RestoreCursor;
   if InputBuffer1 <> '' then
   begin
     if not IsSilent then
     begin
       WriteCommand('With: ');
-      Readln(InputBuffer2);
+      if not ReadCommand(InputBuffer2) then
+      begin
+        FinishCommand;
+        Exit;
+      end;
     end;
     if IsCaseSensitive then
       LastCommand := COMMAND_REPLACE_SEN
     else
       LastCommand := COMMAND_REPLACE_INS;
-    InputBuffer1 := InputBuffer1;
-    InputBuffer2 := InputBuffer2;
+    RestoreCursor;
     if not Editor.SearchForText(InputBuffer1, IsCaseSensitive) then
     begin
       BackupCursor;
       WriteCommand('Text not found!');
       Keyboard.WaitForInput;
-      RestoreCursor;
     end else
     begin
+      BackupCursor;
       for I := 1 to Length(InputBuffer1) do
       begin
         Editor.HandleDeleteRight;
@@ -156,8 +205,7 @@ begin
       end;
     end;
   end;
-  Screen.RenderStatusBar;
-  Screen.RenderEdit;
+  FinishCommand;
 end;
 
 end.
