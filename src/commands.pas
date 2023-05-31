@@ -19,13 +19,15 @@ uses
   Editor, Memory, Screen, Files, Keyboard;
 
 var
-  InputBuffer: String;
+  InputBuffer1,
+  InputBuffer2,
+  InputBuffer3: String;
   IsCursorBackup: Boolean = False;
   OldCursorX,
   OldCursorY: ShortInt;
 
 procedure WriteCommand(const S: String);
-begin                        
+begin
   Screen.RenderStatusBarBlank;
   Screen.SetCursorPosition(0, 0);
   Write(S);
@@ -86,14 +88,14 @@ begin
   if not IsSilent then
   begin
     WriteCommand('Search: ');
-    Readln(InputBuffer);
+    Readln(InputBuffer1);
   end;
   RestoreCursor;
-  if InputBuffer <> '' then
+  if InputBuffer1 <> '' then
   begin
     LastCommand := 'search';
-    InputBuffer := UpCase(InputBuffer);
-    if not Editor.SearchForText(InputBuffer) then
+    InputBuffer1 := UpCase(InputBuffer1);
+    if not Editor.SearchForText(InputBuffer1) then
     begin
       BackupCursor;
       WriteCommand('Text not found!');
