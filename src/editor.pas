@@ -80,7 +80,7 @@ begin
     S := UpCase(S);
     Ind := Pos(S, UpCase(P^.Text));
   end;
-  if (P = Current) and (EditorX = Ind) then
+  if (P = Current) and (EditorX >= Ind) then
     Ind := 0;
   while (Ind < 1) and (P <> nil) do
   begin
@@ -123,8 +123,6 @@ var
   CornerBottom: Integer;
   P, N: PMemoryBlock;
 begin
-  // TODO: Remove this in the future
-  //HandleHome;
   // quit because Y is larger than EditorY's max value
   if Y > Memory.Total then
     Exit;
