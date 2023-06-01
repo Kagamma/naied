@@ -46,6 +46,8 @@ var
   IsRefreshStatusMode: Boolean;
   IsRefreshStatusCursor: Boolean;
   IsRefreshEdit: Boolean;
+  IsRefreshEditScrollUp: Boolean;
+  IsRefreshEditScrollDown: Boolean;
   IsRefreshEditSingleLine: Boolean;
 
 procedure Run;
@@ -266,7 +268,10 @@ begin
     CursorY := CursorY - 1;
     if CursorY < 1 then
     begin
-      IsRefreshEdit := True;
+      if not IsRefreshEditScrollUp then
+        IsRefreshEditScrollUp := True
+      else
+        IsRefreshEdit := True;
       CursorY := 1;
     end;
     UpdateSelBlock(dirUp);
@@ -288,7 +293,10 @@ begin
     CursorY := CursorY + 1;
     if CursorY > ScreenHeight - 1 then
     begin
-      IsRefreshEdit := True;
+      if not IsRefreshEditScrollDown then
+        IsRefreshEditScrollDown := True
+      else
+        IsRefreshEdit := True;
       CursorY := ScreenHeight - 1;
     end;
     UpdateSelBlock(dirDown);
@@ -776,6 +784,9 @@ begin
     IsRefreshStatusCursor := False;
     IsRefreshStatusMode := False;
     IsRefreshEdit := False;
+    IsRefreshEditSingleLine := False;
+    IsRefreshEditScrollUp := False;
+    IsRefreshEditScrollDown := False;
 
     KBInput.Data := Keyboard.WaitForInput;
     KBFlags := Keyboard.GetFlags;
@@ -800,13 +811,19 @@ begin
     Screen.SetCursorPosition(CursorX, CursorY);
     if IsRefreshStatusCursor then
       Screen.RenderStatusCursor;
+
     if IsRefreshEdit then
-    begin
-      Screen.RenderEdit;
-      IsRefreshEditSingleLine := False;
-    end else
+      Screen.RenderEdit
+    else
     if IsRefreshEditSingleLine then
-      Screen.RenderEdit(True);
+      Screen.RenderEdit(True)
+    else
+    if IsRefreshEditScrollUp then
+      Screen.RenderEditScrollUp
+    else
+    if IsRefreshEditScrollDown then
+      Screen.RenderEditScrollDown;
+
     if IsRefreshStatusMode then
       Screen.RenderStatusMode;
   end;

@@ -31,6 +31,8 @@ procedure RenderStatusMode;
 procedure RenderStatusCursor;
 procedure RenderStatusFile;
 procedure RenderEdit(const IsSingle: Boolean = False);
+procedure RenderEditScrollUp;
+procedure RenderEditScrollDown;
 procedure Render;
 
 implementation
@@ -152,6 +154,38 @@ begin
   RenderStatusCursor;
   RenderStatusMode;
   RenderStatusFile;
+end;
+
+procedure RenderEditScrollDown;
+var
+  Src, Dst: PWord;
+  Size, I: Word;
+begin
+  Size := ScreenWidth;
+  Src := ScreenPointer + Size * 2;
+  Dst := ScreenPointer + Size;
+  Size := Size * 2;
+  for I := 0 to ScreenHeight - 3 do
+  begin
+    Move(Src[I * ScreenWidth], Dst[I * ScreenWidth], Size);
+  end;
+  RenderEdit(True);
+end;
+
+procedure RenderEditScrollUp;
+var
+  Src, Dst: PWord;
+  Size, I: Word;
+begin
+  Size := ScreenWidth;
+  Src := ScreenPointer + Size;
+  Dst := ScreenPointer + Size * 2;
+  Size := Size * 2;
+  for I := ScreenHeight - 3 downto 0 do
+  begin
+    Move(Src[I * ScreenWidth], Dst[I * ScreenWidth], Size);
+  end;
+  RenderEdit(True);
 end;
 
 procedure RenderEdit(const IsSingle: Boolean = False);
