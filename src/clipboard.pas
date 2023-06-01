@@ -73,14 +73,12 @@ end;
 procedure SetWinClipboardData(const P: Pointer; const Size: Word); assembler;
 asm
   push es
-  push si
   les bx,P
   mov cx,Size
   mov dx,1
   xor si,si
   mov ax,$1703
   int $2F
-  pop si
   pop es
 end;
 

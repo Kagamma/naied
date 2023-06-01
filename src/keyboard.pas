@@ -153,9 +153,9 @@ type
         Data: Word;
       );
   end;
-              
+
 function WaitForInput: Word;
-function GetKey: Word;
+function HasKey: Word;
 function GetFlags: Byte;
 function IsCtrl(const Flags: Byte): Boolean;
 function IsAlt(const Flags: Byte): Boolean;
@@ -175,7 +175,7 @@ asm
   int $16
 end;
 
-function GetKey: Word; assembler; nostackframe;
+function HasKey: Word; assembler; nostackframe;
 asm
   mov ax,$1100
   int $16

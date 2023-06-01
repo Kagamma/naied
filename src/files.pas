@@ -54,7 +54,7 @@ begin
   end;
   Screen.RenderStatusBar;
   WorkingFile := Path;
-  Editor.MoveTo(1, 100);
+  Editor.MoveTo(1, 1);
 end;
 
 procedure Save;
