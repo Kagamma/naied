@@ -78,6 +78,10 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="Commands"/>
       </Unit>
+      <Unit>
+        <Filename Value="mouse.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
