@@ -96,7 +96,7 @@ procedure FinishCommand;
 begin
   RestoreCursor;
   Screen.RenderStatusBar;
-  Screen.RenderEdit;
+  Screen.RenderEdit(False, False, False);
 end;
 
 function CommandQuit: Char;

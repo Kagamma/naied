@@ -48,7 +48,9 @@ var
   IsRefreshEdit: Boolean;
   IsRefreshEditScrollUp: Boolean;
   IsRefreshEditScrollDown: Boolean;
-  IsRefreshEditSingleLine: Boolean;
+  IsRefreshEditSingleLine: Boolean; 
+  IsRefreshEditScrollLeft: Boolean;
+  IsRefreshEditScrollRight: Boolean;
 
 procedure Run;
 procedure GetActualSel;
@@ -320,7 +322,10 @@ begin
     CursorX := CursorX - 1;
     if CursorX < 0 then
     begin
-      IsRefreshEdit := True;
+      if not IsRefreshEditScrollLeft then
+        IsRefreshEditScrollLeft := True
+      else
+        IsRefreshEdit := True;
       Dec(Offset);
       CursorX := 0;
     end else
@@ -338,7 +343,10 @@ begin
     CursorX := CursorX + 1;
     if CursorX > ScreenWidth - 1 then
     begin
-      IsRefreshEdit := True;
+      if not IsRefreshEditScrollRight then
+        IsRefreshEditScrollRight := True
+      else
+        IsRefreshEdit := True;
       Inc(Offset);
       CursorX := ScreenWidth - 1;
     end else
@@ -787,6 +795,8 @@ begin
     IsRefreshEditSingleLine := False;
     IsRefreshEditScrollUp := False;
     IsRefreshEditScrollDown := False;
+    IsRefreshEditScrollLeft := False;
+    IsRefreshEditScrollRight := False;
 
     KBInput.Data := Keyboard.WaitForInput;
     KBFlags := Keyboard.GetFlags;
@@ -813,16 +823,22 @@ begin
       Screen.RenderStatusCursor;
 
     if IsRefreshEdit then
-      Screen.RenderEdit
+      Screen.RenderEdit(False, False, False)
     else
-    if IsRefreshEditSingleLine then
-      Screen.RenderEdit(True)
+    if IsRefreshEditSingleLine and (not IsRefreshEditScrollLeft) and (not IsRefreshEditScrollRight) then
+      Screen.RenderEdit(True, False, False)
     else
     if IsRefreshEditScrollUp then
       Screen.RenderEditScrollUp
     else
     if IsRefreshEditScrollDown then
-      Screen.RenderEditScrollDown;
+      Screen.RenderEditScrollDown
+    else
+    if IsRefreshEditScrollLeft then
+      Screen.RenderEditScrollLeft(IsRefreshEditSingleLine)
+    else
+    if IsRefreshEditScrollRight then
+      Screen.RenderEditScrollRight(IsRefreshEditSingleLine);
 
     if IsRefreshStatusMode then
       Screen.RenderStatusMode;

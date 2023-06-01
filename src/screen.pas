@@ -30,9 +30,11 @@ procedure RenderStatusBar;
 procedure RenderStatusMode;
 procedure RenderStatusCursor;
 procedure RenderStatusFile;
-procedure RenderEdit(const IsSingle: Boolean = False);
+procedure RenderEdit(const IsSingle, IsSingleLeft, IsSingleRight: Boolean);
 procedure RenderEditScrollUp;
 procedure RenderEditScrollDown;
+procedure RenderEditScrollLeft(const IsSingleLine: Boolean);
+procedure RenderEditScrollRight(const IsSingleLine: Boolean);
 procedure Render;
 
 implementation
@@ -155,40 +157,70 @@ begin
   RenderStatusMode;
   RenderStatusFile;
 end;
+ 
+procedure RenderEditScrollUp;
+var
+  Src, Dst: PWord;
+  Size, I: Word;
+begin
+  Src := ScreenPointer + ScreenWidth;
+  Dst := ScreenPointer + ScreenWidth * 2;
+  Size := ScreenWidth * 2;
+  for I := ScreenHeight - 3 downto 0 do
+  begin
+    Move(Src[I * ScreenWidth], Dst[I * ScreenWidth], Size);
+  end;
+  RenderEdit(True, False, False);
+end;
 
 procedure RenderEditScrollDown;
 var
   Src, Dst: PWord;
   Size, I: Word;
 begin
-  Size := ScreenWidth;
-  Src := ScreenPointer + Size * 2;
-  Dst := ScreenPointer + Size;
-  Size := Size * 2;
+  Src := ScreenPointer + ScreenWidth * 2;
+  Dst := ScreenPointer + ScreenWidth;
+  Size := ScreenWidth * 2;
   for I := 0 to ScreenHeight - 3 do
   begin
     Move(Src[I * ScreenWidth], Dst[I * ScreenWidth], Size);
   end;
-  RenderEdit(True);
+  RenderEdit(True, False, False);
 end;
 
-procedure RenderEditScrollUp;
+procedure RenderEditScrollLeft(const IsSingleLine: Boolean);
 var
-  Src, Dst: PWord;
+  Src: PWord;
   Size, I: Word;
 begin
-  Size := ScreenWidth;
-  Src := ScreenPointer + Size;
-  Dst := ScreenPointer + Size * 2;
-  Size := Size * 2;
-  for I := ScreenHeight - 3 downto 0 do
+  Src := ScreenPointer + ScreenWidth;
+  Size := ScreenWidth * 2 - 2;
+  for I := 0 to ScreenHeight - 3 do
   begin
-    Move(Src[I * ScreenWidth], Dst[I * ScreenWidth], Size);
+    Move(Src[I * ScreenWidth], Src[I * ScreenWidth + 1], Size);
   end;
-  RenderEdit(True);
+  RenderEdit(False, True, False); 
+  if IsSingleLine then
+    RenderEdit(True, False, False);
 end;
 
-procedure RenderEdit(const IsSingle: Boolean = False);
+procedure RenderEditScrollRight(const IsSingleLine: Boolean);
+var
+  Src: PWord;
+  Size, I: Word;
+begin
+  Src := ScreenPointer + ScreenWidth;
+  Size := ScreenWidth * 2 - 2;
+  for I := 0 to ScreenHeight - 3 do
+  begin
+    Move(Src[I * ScreenWidth + 1], Src[I * ScreenWidth], Size);
+  end;
+  RenderEdit(False, False, True);
+  if IsSingleLine then
+    RenderEdit(True, False, False);
+end;
+
+procedure RenderEdit(const IsSingle, IsSingleLeft, IsSingleRight: Boolean);
 var
   I, J, K, L: Word;
   P: PMemoryBlock;
@@ -196,6 +228,7 @@ var
   Attr: Word;
   C: Char;
   Start, Finish,
+  Left, Right,
   SelStartRow,
   SelEndRow: Byte;
 begin
@@ -207,6 +240,16 @@ begin
   begin
     Start := 1;
     Finish := ScreenHeight - 1;
+  end;
+  Left := 0; 
+  Right := ScreenWidth - 1;
+  if IsSingleLeft then
+  begin
+    Right := 0;
+  end;
+  if IsSingleRight then
+  begin
+    Left := Right;
   end;
   // Check for selection
   if IsSingle then
@@ -252,7 +295,7 @@ begin
           Break;
       end;
     end;
-    for I := 0 to ScreenWidth - 1 do
+    for I := Left to Right do
     begin
       K := Offset + I + 1;
       if K > L then
@@ -286,7 +329,7 @@ procedure Render;
 begin
   SetCursorPosition(CursorX, CursorY);
   RenderStatusBar;
-  RenderEdit;
+  RenderEdit(False, False, False);
 end;
 
 initialization
