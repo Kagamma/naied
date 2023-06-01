@@ -30,7 +30,7 @@ procedure RenderStatusBar;
 procedure RenderStatusMode;
 procedure RenderStatusCursor;
 procedure RenderStatusFile;
-procedure RenderEdit;
+procedure RenderEdit(const IsSingle: Boolean = False);
 procedure Render;
 
 implementation
@@ -154,24 +154,37 @@ begin
   RenderStatusFile;
 end;
 
-procedure RenderEdit;
+procedure RenderEdit(const IsSingle: Boolean = False);
 var
   I, J, K, L: Word;
   P: PMemoryBlock;
   TrailingSpacePos: Word;
   Attr: Word;
   C: Char;
+  Start, Finish,
   SelStartRow,
   SelEndRow: Byte;
 begin
+  if IsSingle then
+  begin
+    Start := CursorY;
+    Finish := CursorY;
+  end else
+  begin
+    Start := 1;
+    Finish := ScreenHeight - 1;
+  end;
   // Check for selection
+  if IsSingle then
+    P := Memory.Current
+  else
+    P := Memory.View;
   if SelStart <> nil then
   begin
     GetActualSel;
-    P := Memory.View;
     SelStartRow := 0;
     SelEndRow := ScreenHeight;
-    for I := 1 to ScreenHeight - 1 do
+    for I := Start to Finish do
     begin
       if P = ActualSelStart then
         SelStartRow := I;
@@ -181,8 +194,11 @@ begin
     end;
   end;
   //
-  P := Memory.View;
-  for J := 1 to ScreenHeight - 1 do
+  if IsSingle then
+    P := Memory.Current
+  else
+    P := Memory.View;
+  for J := Start to Finish do
   begin
     if P = nil then
     begin
@@ -234,7 +250,6 @@ end;
 
 procedure Render;
 begin
-  FillWord(ScreenPointer[0], ScreenWidth * ScreenHeight, AttrNormal);
   SetCursorPosition(CursorX, CursorY);
   RenderStatusBar;
   RenderEdit;

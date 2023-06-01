@@ -46,6 +46,7 @@ var
   IsRefreshStatusMode: Boolean;
   IsRefreshStatusCursor: Boolean;
   IsRefreshEdit: Boolean;
+  IsRefreshEditSingleLine: Boolean;
 
 procedure Run;
 procedure GetActualSel;
@@ -381,7 +382,7 @@ begin
   HandleRight;
   Modified := True;
   IsRefreshStatusMode := True;
-  IsRefreshEdit := True;
+  IsRefreshEditSingleLine := True;
 end;
 
 procedure HandleInsertString(const S: String);
@@ -396,7 +397,7 @@ begin
     HandleRight;
   Modified := True;
   IsRefreshStatusMode := True;
-  IsRefreshEdit := True;
+  IsRefreshEditSingleLine := True;
 end;
 
 procedure HandleDeleteLeft;
@@ -408,16 +409,17 @@ begin
   begin
     HandleUp;
     HandleEnd;
-    Memory.Merge(M^.Prev, EditorX);
+    Memory.Merge(M^.Prev, EditorX); 
+    IsRefreshEdit := True;
   end else
   begin
     System.Delete(Current^.Text, EditorX - 1, 1);
     HandleLeft;
-    IsRefreshStatusCursor := True;
+    IsRefreshStatusCursor := True; 
+    IsRefreshEditSingleLine := True;
   end;
   Modified := True;
   IsRefreshStatusMode := True;
-  IsRefreshEdit := True;
 end;
 
 procedure HandleDeleteRight;
@@ -430,14 +432,15 @@ begin
   if EditorX > Size then
   begin
     Memory.Merge(M, EditorX);
-    IsRefreshStatusCursor := True;
+    IsRefreshStatusCursor := True; 
+    IsRefreshEdit := True;
   end else
   begin
     System.Delete(Current^.Text, EditorX, 1);
+    IsRefreshEditSingleLine := True;
   end;
   Modified := True;
   IsRefreshStatusMode := True;
-  IsRefreshEdit := True;
 end;
 
 procedure HandleDeleteBlock;
@@ -798,7 +801,12 @@ begin
     if IsRefreshStatusCursor then
       Screen.RenderStatusCursor;
     if IsRefreshEdit then
+    begin
       Screen.RenderEdit;
+      IsRefreshEditSingleLine := False;
+    end else
+    if IsRefreshEditSingleLine then
+      Screen.RenderEdit(True);
     if IsRefreshStatusMode then
       Screen.RenderStatusMode;
   end;
