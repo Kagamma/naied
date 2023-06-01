@@ -69,7 +69,7 @@ var
 function SearchForText(S: String; const IsCaseSensitive: Boolean): Boolean;
 var
   P: PMemoryBlock;
-  Ind: Integer;
+  Ind, Len: Integer;
   Loop: Integer = 0;
 begin
   P := Current;
@@ -100,6 +100,13 @@ begin
   begin
     Current := P;
     MoveTo(Ind, EditorY + Loop);
+    Len := Length(S);
+    if ScreenWidth - CursorX < Len then
+    begin
+      Len := Len - (ScreenWidth - CursorX);
+      Offset := Offset + Len;
+      CursorX := CursorX - Len;
+    end;
     Result := True;
   end else
   begin
@@ -117,7 +124,7 @@ var
   P, N: PMemoryBlock;
 begin
   // TODO: Remove this in the future
-  HandleHome;
+  //HandleHome;
   // quit because Y is larger than EditorY's max value
   if Y > Memory.Total then
     Exit;
@@ -147,7 +154,10 @@ begin
   begin
     // X and Y are not within view, so we need to scroll things
     if X < CornerLeft then
-      CursorX := 0
+    begin
+      CursorX := 0;
+      Offset := Offset - (CornerLeft - X);
+    end
     else
     if X >= CornerRight then
     begin
