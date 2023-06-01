@@ -146,6 +146,7 @@ begin
       LastCommand := COMMAND_SEARCH_SEN
     else
       LastCommand := COMMAND_SEARCH_INS;
+    WriteCommand('Searching...');
     RestoreCursor;
     if not Editor.SearchForText(InputBuffer1, IsCaseSensitive) then
     begin
@@ -186,6 +187,7 @@ begin
       LastCommand := COMMAND_REPLACE_SEN
     else
       LastCommand := COMMAND_REPLACE_INS;
+    WriteCommand('Replacing...');
     RestoreCursor;
     if not Editor.SearchForText(InputBuffer1, IsCaseSensitive) then
     begin
