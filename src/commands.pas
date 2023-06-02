@@ -132,10 +132,6 @@ end;
 
 procedure CommandSearch(const IsSilent, IsCaseSensitive: Boolean);
 begin
-  if IsCaseSensitive then
-    LastCommand := COMMAND_SEARCH_SEN
-  else
-    LastCommand := COMMAND_SEARCH_INS;
   BackupCursor;
   if not IsSilent then
   begin
@@ -148,6 +144,10 @@ begin
   end;
   if InputBuffer1 <> '' then
   begin
+    if IsCaseSensitive then
+      LastCommand := COMMAND_SEARCH_SEN
+    else
+      LastCommand := COMMAND_SEARCH_INS;
     WriteCommand('Searching...');
     RestoreCursor;
     if not Editor.SearchForText(InputBuffer1, IsCaseSensitive) then
@@ -164,10 +164,6 @@ procedure CommandReplace(const IsSilent, IsCaseSensitive: Boolean);
 var
   I: Word;
 begin
-  if IsCaseSensitive then
-    LastCommand := COMMAND_REPLACE_SEN
-  else
-    LastCommand := COMMAND_REPLACE_INS;
   BackupCursor;
   if not IsSilent then
   begin
@@ -189,6 +185,10 @@ begin
         Exit;
       end;
     end;
+    if IsCaseSensitive then
+      LastCommand := COMMAND_REPLACE_SEN
+    else
+      LastCommand := COMMAND_REPLACE_INS;
     WriteCommand('Replacing...');
     RestoreCursor;
     if not Editor.SearchForText(InputBuffer1, IsCaseSensitive) then
