@@ -9,6 +9,7 @@ const
   COMMAND_SEARCH_SEN = 2;
   COMMAND_REPLACE_INS = 3;
   COMMAND_REPLACE_SEN = 4;
+  COMMAND_GOTO = 4;
 
 var
   LastCommand: Word = 0;
@@ -16,6 +17,7 @@ var
 function CommandQuit: Char;
 procedure CommandSearch(const IsSilent, IsCaseSensitive: Boolean);
 procedure CommandReplace(const IsSilent, IsCaseSensitive: Boolean);
+procedure CommandGoto;
 
 implementation
 
@@ -130,6 +132,10 @@ end;
 
 procedure CommandSearch(const IsSilent, IsCaseSensitive: Boolean);
 begin
+  if IsCaseSensitive then
+    LastCommand := COMMAND_SEARCH_SEN
+  else
+    LastCommand := COMMAND_SEARCH_INS;
   BackupCursor;
   if not IsSilent then
   begin
@@ -142,10 +148,6 @@ begin
   end;
   if InputBuffer1 <> '' then
   begin
-    if IsCaseSensitive then
-      LastCommand := COMMAND_SEARCH_SEN
-    else
-      LastCommand := COMMAND_SEARCH_INS;
     WriteCommand('Searching...');
     RestoreCursor;
     if not Editor.SearchForText(InputBuffer1, IsCaseSensitive) then
@@ -162,6 +164,10 @@ procedure CommandReplace(const IsSilent, IsCaseSensitive: Boolean);
 var
   I: Word;
 begin
+  if IsCaseSensitive then
+    LastCommand := COMMAND_REPLACE_SEN
+  else
+    LastCommand := COMMAND_REPLACE_INS;
   BackupCursor;
   if not IsSilent then
   begin
@@ -183,10 +189,6 @@ begin
         Exit;
       end;
     end;
-    if IsCaseSensitive then
-      LastCommand := COMMAND_REPLACE_SEN
-    else
-      LastCommand := COMMAND_REPLACE_INS;
     WriteCommand('Replacing...');
     RestoreCursor;
     if not Editor.SearchForText(InputBuffer1, IsCaseSensitive) then
@@ -206,6 +208,34 @@ begin
         Editor.HandleInsert(InputBuffer2[I]);
       end;
     end;
+  end;
+  FinishCommand;
+end;
+
+procedure CommandGoto;
+var
+  Y, Code: Integer;
+begin
+  LastCommand := COMMAND_REPLACE_SEN;
+  BackupCursor;
+  WriteCommand('Line number: ');
+  if not ReadCommand(InputBuffer1) then
+  begin
+    FinishCommand;
+    Exit;
+  end;
+  if InputBuffer1 <> '' then
+    Val(InputBuffer1, Y, Code)
+  else
+    Code := 1;
+  if Code <> 0 then
+  begin
+    WriteCommand('Not a number!');
+    Keyboard.WaitForInput;
+  end else
+  begin
+    RestoreCursor;
+    Editor.MoveTo(1, Y);
   end;
   FinishCommand;
 end;

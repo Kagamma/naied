@@ -59,7 +59,7 @@ procedure HandleInsertString(const S: String);
 procedure HandleDeleteRight;
 procedure HandleEnter;       
 procedure HandleHome;
-procedure MoveTo(const X, Y: Integer);
+procedure MoveTo(X, Y: Integer);
 function SearchForText(S: String; const IsCaseSensitive: Boolean): Boolean;
 
 implementation
@@ -119,7 +119,7 @@ begin
   end;
 end;
 
-procedure MoveTo(const X, Y: Integer);
+procedure MoveTo(X, Y: Integer);
 var
   Loop,
   CornerLeft,
@@ -129,8 +129,7 @@ var
   P, N: PMemoryBlock;
 begin
   // quit because Y is larger than EditorY's max value
-  if Y > Memory.Total then
-    Exit;
+  Y := Min(Y, Memory.Total);
   // Look for current 
   Loop := 0;
   N := Memory.First;
@@ -670,6 +669,13 @@ begin
             Highlight := 0;
           IsRefreshEdit := True;
         end else
+          goto Other;
+      end;
+    SCAN_G:
+      begin
+        if IsCtrl(KBFlags) then
+          CommandGoto
+        else
           goto Other;
       end;
     SCAN_V:
