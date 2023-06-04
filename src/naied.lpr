@@ -6,7 +6,7 @@ uses
   Dos, Memory, Globals, Screen, Editor, Keyboard, Files, Clipboard, Commands;
 
 var
-  I: Integer;
+  I: Byte;
 
 begin
   if ParamCount = 0 then

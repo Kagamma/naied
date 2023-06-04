@@ -202,7 +202,7 @@ begin
       for I := 1 to Length(InputBuffer1) do
       begin
         Editor.HandleDeleteRight;
-      end;      
+      end;
       for I := 1 to Length(InputBuffer2) do
       begin
         Editor.HandleInsert(InputBuffer2[I]);
@@ -214,7 +214,8 @@ end;
 
 procedure CommandGoto;
 var
-  Y, Code: Integer;
+  Code: Integer;
+  Y: DWord;
 begin
   LastCommand := COMMAND_REPLACE_SEN;
   BackupCursor;

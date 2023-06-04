@@ -59,7 +59,7 @@ procedure HandleInsertString(const S: String);
 procedure HandleDeleteRight;
 procedure HandleEnter;       
 procedure HandleHome;
-procedure MoveTo(X, Y: Integer);
+procedure MoveTo(X, Y: LongInt);
 function SearchForText(S: String; const IsCaseSensitive: Boolean): Boolean;
 
 implementation
@@ -74,8 +74,8 @@ var
 function SearchForText(S: String; const IsCaseSensitive: Boolean): Boolean;
 var
   P: PMemoryBlock;
-  Ind, Len: Integer;
-  Loop: Integer = 0;
+  Ind, Len: LongInt;
+  Loop: LongInt = 0;
 begin
   P := Current;
   if IsCaseSensitive then
@@ -119,13 +119,13 @@ begin
   end;
 end;
 
-procedure MoveTo(X, Y: Integer);
+procedure MoveTo(X, Y: LongInt);
 var
   Loop,
   CornerLeft,
   CornerTop,
   CornerRight,
-  CornerBottom: Integer;
+  CornerBottom: LongInt;
   P, N: PMemoryBlock;
 begin
   // quit because Y is larger than EditorY's max value

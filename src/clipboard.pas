@@ -142,7 +142,7 @@ end;
 
 procedure PasteBlock;
 var
-  I: Integer;
+  I: DWord;
   C: Char;
   WCBSize: DWord;
   S: String;

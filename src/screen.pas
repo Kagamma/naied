@@ -142,7 +142,7 @@ end;
 
 procedure RenderStatusBarBlank;
 var
-  I: Integer;
+  I: Byte;
 begin
   for I := 0 to ScreenWidth - 1 do
   begin
