@@ -74,8 +74,8 @@ procedure GetHandler; assembler; nostackframe;
 asm
   mov ax,$4310
   int $2F
-  mov word ptr [XMSHandler    ],bx
-  mov word ptr [XMSHandler + 2],es
+  mov word [XMSHandler    ],bx
+  mov word [XMSHandler + 2],es
 end;
 
 function GetVersion: Word; assembler; nostackframe;
