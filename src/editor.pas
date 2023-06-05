@@ -30,8 +30,8 @@ const
 var
   EditorMode: TEditorMode = emInsert;
   WorkingFile: String = 'NONAME.TXT';
-  EditorX: SmallInt = 1;
-  EditorY: LongInt = 1;
+  EditorX: Word = 1;
+  EditorY: LongWord = 1;
   Modified: Boolean = False;
   SelStartIndex,
   SelEndIndex: Word;
