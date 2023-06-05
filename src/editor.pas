@@ -9,9 +9,7 @@ uses
 
 type
   TEditorMode = (
-    emCommand,
     emInsert,
-    emReplace,
     emSelect
   );
 
@@ -25,7 +23,7 @@ type
   );
 
 const
-  EDITOR_MODE_SYMBOL: array[TEditorMode] of Char = ('C', 'I', 'R', 'S');
+  EDITOR_MODE_SYMBOL: array[TEditorMode] of Char = ('I', 'S');
 
 var
   EditorMode: TEditorMode = emInsert;
@@ -830,8 +828,7 @@ begin
     KBFlags := Keyboard.GetFlags;
   Again:
     case EditorMode of
-      emInsert,
-      emReplace:
+      emInsert:
         begin
           if not HandleKeyboardEdit then
             goto Again;
