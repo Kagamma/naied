@@ -160,15 +160,12 @@ end;
 procedure RenderEditScrollUp;
 var
   Src, Dst: PWord;
-  Size, I: Word;
+  Size: Word;
 begin
   Src := ScreenPointer + ScreenWidth;
   Dst := ScreenPointer + ScreenWidth * 2;
   Size := ScreenWidth * 2;
-  for I := ScreenHeight - 3 downto 0 do
-  begin
-    Move(Src[I * ScreenWidth], Dst[I * ScreenWidth], Size);
-  end;
+  Move(Src[0], Dst[0], Size * (ScreenHeight - 3));
   RenderEdit(True, False, False);
 end;
 
