@@ -13,6 +13,7 @@ A small text editor for DOS real mode, written in Free Pascal. The project is me
 - Search: Use `Ctrl-F` or `Ctrl-Shift-F` for case-sensitive search, and `F3` to search for the next occurrence.
 - Replace: Use `Ctrl-R` or `Ctrl-Shift-R` for case-sensitive replace, and `F4` to replace the next occurrence.
 - Go To Line: Use `Ctrl-G`
+- Open / Create new file: Use `Ctrl-O`
 
 ### Limitations
 - No undo/redo functionality

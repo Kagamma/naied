@@ -35,7 +35,6 @@ procedure RenderEditScrollUp;
 procedure RenderEditScrollDown;
 procedure RenderEditScrollLeft(const IsSingleLine: Boolean);
 procedure RenderEditScrollRight(const IsSingleLine: Boolean);
-procedure Render;
 
 implementation
 
@@ -323,13 +322,6 @@ begin
     end;
     P := P^.Next;
   end;
-end;
-
-procedure Render;
-begin
-  SetCursorPosition(CursorX, CursorY);
-  RenderStatusBar;
-  RenderEdit(False, False, False);
 end;
 
 initialization

@@ -685,7 +685,29 @@ begin
           PasteBlock;
         end else
           goto Other;
-      end
+      end;
+    SCAN_O:
+      begin
+        if IsCtrl(KBFlags) then
+        begin
+          CommandOpen;
+        end else
+          goto Other;
+      end;
+    SCAN_ESC:
+      case CommandSaveBefore('Save before quit? (Y/N/C)') of
+        'y':
+          begin
+            Files.Save;
+            SetMode80x25;
+            Halt;
+          end;
+        'n':
+          begin
+            SetMode80x25;
+            Halt;
+          end;
+      end;
     else
       begin
       Other:
@@ -807,9 +829,6 @@ begin
     KBInput.Data := Keyboard.WaitForInput;
     KBFlags := Keyboard.GetFlags;
   Again:
-    if KBInput.ScanCode = SCAN_ESC then
-      CommandQuit
-    else
     case EditorMode of
       emInsert,
       emReplace:

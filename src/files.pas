@@ -9,6 +9,7 @@ uses
 
 procedure Open(const Path: String);
 procedure Save;
+function Exists(const Path: String): Boolean;
 
 implementation
 
@@ -17,6 +18,23 @@ uses
   Screen,
   Editor;
 
+function Exists(const Path: String): Boolean;
+var
+  F: TextFile;
+begin
+  AssignFile(F, Path);
+  {$I-}
+  Reset(F);
+  {$I+}
+  if IOResult = 0 then
+  begin
+    Result := True;
+    CloseFile(F);
+  end
+  else
+    Result := False;
+end;
+
 procedure Open(const Path: String);
 var
   F: TextFile;
@@ -24,15 +42,15 @@ var
   Size: Word;
   S: String;
 begin
+  Screen.RenderStatusBarBlank;
+  Memory.Init;
+  M := Memory.First;
   AssignFile(F, Path);
   {$I-}
   Reset(F);
   {$I+}
-  Screen.RenderStatusBarBlank;
   if IOResult = 0 then
   begin
-    Memory.Init;
-    M := Memory.First;
     while not EOF(F) do
     begin
       if Total mod 100 = 0 then
@@ -52,9 +70,14 @@ begin
     end;
     CloseFile(F);
   end;
-  Screen.RenderStatusBar;
   WorkingFile := Path;
-  Editor.MoveTo(1, 1);
+  CursorX := 0;
+  CursorY := 1;
+  EditorX := 1;
+  EditorY := 1;
+  Screen.SetCursorPosition(CursorX, CursorY);
+  Screen.RenderStatusBar;
+  Screen.RenderEdit(False, False, False);
 end;
 
 procedure Save;

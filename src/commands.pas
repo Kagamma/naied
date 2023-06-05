@@ -9,15 +9,17 @@ const
   COMMAND_SEARCH_SEN = 2;
   COMMAND_REPLACE_INS = 3;
   COMMAND_REPLACE_SEN = 4;
-  COMMAND_GOTO = 4;
+  COMMAND_GOTO = 5;
+  COMMAND_OPEN = 6;
 
 var
-  LastCommand: Word = 0;
+  LastCommand: Byte = 0;
 
-function CommandQuit: Char;
+function CommandSaveBefore(const Msg: String): Char;
 procedure CommandSearch(const IsSilent, IsCaseSensitive: Boolean);
 procedure CommandReplace(const IsSilent, IsCaseSensitive: Boolean);
-procedure CommandGoto;
+procedure CommandGoto;   
+procedure CommandOpen;
 
 implementation
 
@@ -101,13 +103,13 @@ begin
   Screen.RenderEdit(False, False, False);
 end;
 
-function CommandQuit: Char;
+function CommandSaveBefore(const Msg: String): Char;
 begin
   if Editor.Modified then
   begin  
     Result := ' ';
     BackupCursor;
-    WriteCommand('Save before quit? (Y/N/C)');
+    WriteCommand(Msg);
     repeat
       Result := TKeyboardInput(Keyboard.WaitForInput).CharCode;
     until Result in ['y', 'n', 'c'];
@@ -115,19 +117,6 @@ begin
     Screen.RenderStatusBar;
   end else
     Result := 'n';
-  case Result of
-    'y':
-      begin
-        Files.Save;
-        SetMode80x25;
-        Halt;
-      end; 
-    'n':
-      begin
-        SetMode80x25;
-        Halt;
-      end;
-  end;
 end;
 
 procedure CommandSearch(const IsSilent, IsCaseSensitive: Boolean);
@@ -239,6 +228,29 @@ begin
     Editor.MoveTo(1, Y);
   end;
   FinishCommand;
+end;
+
+procedure CommandOpen;
+begin
+  case CommandSaveBefore('Save current file? (Y/N/C)') of
+    'y':
+      begin
+        Files.Save;
+      end;
+    'c':
+      begin
+        Exit;
+      end;
+  end;
+  BackupCursor;
+  LastCommand := COMMAND_OPEN;
+  WriteCommand('File name: ');
+  if not ReadCommand(InputBuffer1) then
+  begin
+    FinishCommand;
+    Exit;
+  end;
+  Files.Open(InputBuffer1);
 end;
 
 end.

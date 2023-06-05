@@ -9,22 +9,30 @@ var
   I: Byte;
 
 begin
-  if ParamCount = 0 then
-  begin
-    Writeln('Usage: naied.exe [options] <file name>');
-    Writeln(' -l: Switch to text mode 80x50');
-    Halt;
-  end;
   SetMode80x25;
-  for I := 1 to ParamCount do
+  if ParamCount > 0 then
   begin
-    case ParamStr(I) of
-      '-l':
-        SetMode80x50;
+    for I := 1 to ParamCount do
+    begin
+      case ParamStr(I) of
+        '-h':
+          begin
+            Writeln('Usage: naied.exe [options] <file name>');
+            Writeln(' -h: This help screen');
+            Writeln(' -l: Switch to text mode 80x50');
+            Halt;
+          end;
+        '-l':
+          SetMode80x50;
+      end;
     end;
-  end;
-  Files.Open(ParamStr(ParamCount));
-  Screen.Render;
+    if Files.Exists(ParamStr(ParamCount)) then
+      Files.Open(ParamStr(ParamCount))
+    else
+      Files.Open('NONAME.TXT');
+  end
+  else
+    Files.Open('NONAME.TXT');
   Editor.Run;
   SetMode80x25;
 end.
