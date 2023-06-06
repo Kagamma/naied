@@ -165,7 +165,7 @@ begin
       Offset := X - ScreenWidth;
     end;
     if Y < CornerTop then
-      CursorY := 0
+      CursorY := 1
     else
     if Y >= CornerBottom then
       CursorY := ScreenHeight - 1;
@@ -174,7 +174,7 @@ begin
   end;
   // Look for view
   CornerTop := EditorY - CursorY + 1;
-  while Loop <> CornerTop do
+  while Loop > CornerTop do
   begin
     P := P^.Prev;
     Dec(Loop);
