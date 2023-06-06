@@ -9,7 +9,8 @@ A small text editor for DOS real mode, written in Free Pascal. The project is me
 - Handle file bigger than 64KB
 - Highlight symbols and trailing spaces, enable / disable it by pressing `Ctrl-Shift-H`
 - 32KB clipboard with support for Windows clipboard
-- Common navigation methods: Arrow keys to move cursor, `Ctrl-C/V/X` for Copy/Paste/Cut, selecting blocks of text with `Shift+Arrow keys`, `Ctrl-S` to save the file, `Esc` to quit the editor
+- Common navigation methods: Arrow keys to move cursor, `Ctrl-C/V/X` for Copy/Paste/Cut, selecting blocks of text with `Shift+Arrow keys`, `Esc` to quit the editor
+- Save: Use `Ctrl-S`, or `Ctrl-Shift-S` for save as another file
 - Search: Use `Ctrl-F` or `Ctrl-Shift-F` for case-sensitive search, and `F3` to search for the next occurrence.
 - Replace: Use `Ctrl-R` or `Ctrl-Shift-R` for case-sensitive replace, and `F4` to replace the next occurrence.
 - Go To Line: Use `Ctrl-G`

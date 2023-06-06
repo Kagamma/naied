@@ -11,6 +11,7 @@ const
   COMMAND_REPLACE_SEN = 4;
   COMMAND_GOTO = 5;
   COMMAND_OPEN = 6;
+  COMMAND_SAVEAS = 7;
 
 var
   LastCommand: Byte = 0;
@@ -19,7 +20,9 @@ function CommandSaveBefore(const Msg: String): Char;
 procedure CommandSearch(const IsSilent, IsCaseSensitive: Boolean);
 procedure CommandReplace(const IsSilent, IsCaseSensitive: Boolean);
 procedure CommandGoto;   
-procedure CommandOpen;
+procedure CommandOpen;  
+procedure CommandSave;
+procedure CommandSaveAs;
 
 implementation
 
@@ -251,6 +254,32 @@ begin
     Exit;
   end;
   Files.Open(InputBuffer1);
+end;
+
+procedure CommandSave;
+begin
+  Files.Save;
+  Modified := False;
+  IsRefreshStatusCursor := True;
+  IsRefreshStatusMode := True;
+end;
+
+procedure CommandSaveAs;
+begin
+  LastCommand := COMMAND_SAVEAS;
+  BackupCursor;
+  WriteCommand('File name: ');
+  if not ReadCommand(InputBuffer1) then
+  begin
+    FinishCommand;
+    Exit;
+  end;
+  if InputBuffer1 <> '' then
+  begin
+    WorkingFile := InputBuffer1;
+    CommandSave;
+  end;
+  FinishCommand;
 end;
 
 end.

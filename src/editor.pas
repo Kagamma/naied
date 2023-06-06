@@ -512,14 +512,6 @@ begin
   end;
 end;
 
-procedure HandleCtrlS;
-begin
-  Files.Save;
-  Modified := False;
-  IsRefreshStatusCursor := True;
-  IsRefreshStatusMode := True;
-end;
-
 function CheckForSelect: Boolean;
 begin
   if IsShift(KBFlags) then
@@ -556,15 +548,6 @@ label
   Other;
 begin
   Result := True;
-  if IsCtrl(KBFlags) then
-  begin
-    case KBInput.ScanCode of
-      SCAN_S:
-        begin
-          HandleCtrlS;
-        end;
-    end;
-  end;
   case KBInput.ScanCode of
     SCAN_UP:
       begin
@@ -689,6 +672,17 @@ begin
         if IsCtrl(KBFlags) then
         begin
           CommandOpen;
+        end else
+          goto Other;
+      end;
+    SCAN_S:
+      begin
+        if IsCtrl(KBFlags) then 
+        begin
+          if IsShift(KBFlags) then
+            CommandSaveAs
+          else
+            CommandSave;
         end else
           goto Other;
       end;
