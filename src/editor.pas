@@ -217,6 +217,7 @@ begin
         else
         if (SelStart = SelEnd) and (SelEndIndex >= SelStartIndex) then
           IsDirDown := True;
+        IsRefreshEdit := True;
       end;
     dirDown:
       begin
@@ -229,33 +230,37 @@ begin
         else
         if (SelStart = SelEnd) and (SelEndIndex >= SelStartIndex) then
           IsDirDown := True;
+        IsRefreshEdit := True;
       end;
     dirLeft:
       begin
         SelEndIndex := Max(0, SelEndIndex - 1);
         if (SelStart = SelEnd) and (SelEndIndex < SelStartIndex) then
           IsDirDown := False;
+        IsRefreshEditSingleLine := True;
       end;
     dirRight:
       begin
         SelEndIndex := Min(MEMORY_TEXT_SIZE, SelEndIndex + 1);
         if (SelStart = SelEnd) and (SelEndIndex >= SelStartIndex) then
           IsDirDown := True;
+        IsRefreshEditSingleLine := True;
       end;
     dirHome:
       begin
         SelEndIndex := 0;
         if (SelStart = SelEnd) and (SelEndIndex < SelStartIndex) then
           IsDirDown := False;
+        IsRefreshEdit := True;
       end;
     dirEnd:
       begin
         SelEndIndex := Length(SelEnd^.Text);
         if (SelStart = SelEnd) and (SelEndIndex >= SelStartIndex) then
           IsDirDown := True;
+        IsRefreshEdit := True;
       end;
   end;
-  IsRefreshEdit := True;
 end;
 
 procedure HandleUp;
