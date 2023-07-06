@@ -22,6 +22,7 @@ var
 
 procedure SetMode80x50;
 procedure SetMode80x25;
+procedure SetMode40x25;
 procedure SetCursorPosition(const X, Y: Byte);
 function RenderTextAtLeft(const X, Y: Byte; const S: String): Byte;
 function RenderTextAtRight(const X, Y: Byte; const S: String): Byte;
@@ -63,6 +64,17 @@ begin
     int $10
   end;
   ScreenWidth := 80;
+  ScreenHeight := 25;
+end;
+
+procedure SetMode40x25;
+begin
+  asm
+    xor ax,ax
+    xor bl,bl
+    int $10
+  end;
+  ScreenWidth := 40;
   ScreenHeight := 25;
 end;
 

@@ -81,6 +81,7 @@
       <Unit>
         <Filename Value="mouse.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="Mouse"/>
       </Unit>
     </Units>
   </ProjectOptions>
