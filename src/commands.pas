@@ -255,6 +255,7 @@ begin
   end;
   if InputBuffer1 <> '' then
     Files.Open(InputBuffer1);
+  FinishCommand;
 end;
 
 procedure CommandSave;
