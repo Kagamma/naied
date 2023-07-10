@@ -253,7 +253,8 @@ begin
     FinishCommand;
     Exit;
   end;
-  Files.Open(InputBuffer1);
+  if InputBuffer1 <> '' then
+    Files.Open(InputBuffer1);
 end;
 
 procedure CommandSave;

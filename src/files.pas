@@ -43,14 +43,14 @@ var
   S: String;
 begin
   Screen.RenderStatusBarBlank;
-  Memory.Init;
-  M := Memory.First;
   AssignFile(F, Path);
   {$I-}
   Reset(F);
   {$I+}
   if IOResult = 0 then
   begin
+    Memory.Init;
+    M := Memory.First;
     while not EOF(F) do
     begin
       if Total mod 100 = 0 then
