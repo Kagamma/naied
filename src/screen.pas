@@ -7,7 +7,11 @@ interface
 uses
   Memory, Globals;
 
+type
+  TScreenMode = (sm80x25, sm80x50, sm40x25);
+
 var
+  ScreenMode   : TScreenMode = sm80x25;
   ScreenWidth  : Byte = 80;
   ScreenHeight : Byte = 25;
   ScreenPointer: PWord;
@@ -76,33 +80,42 @@ end;
 
 procedure SetMode80x50;
 begin
+  if ScreenMode = sm80x50 then
+    Exit;
   asm
     mov ax,$1112
     xor bl,bl
     int $10
   end;
+  ScreenMode := sm80x50;
   ScreenWidth := 80;
   ScreenHeight := 50;
 end;
 
 procedure SetMode80x25;
 begin
+  if ScreenMode = sm80x25 then
+    Exit;
   asm
     mov ax,$0003
     xor bl,bl
     int $10
   end;
+  ScreenMode := sm80x25;
   ScreenWidth := 80;
   ScreenHeight := 25;
 end;
 
 procedure SetMode40x25;
 begin
+  if ScreenMode = sm40x25 then
+    Exit;
   asm
     xor ax,ax
     xor bl,bl
     int $10
-  end;
+  end;  
+  ScreenMode := sm40x25;
   ScreenWidth := 40;
   ScreenHeight := 25;
 end;
