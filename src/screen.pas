@@ -9,7 +9,7 @@ uses
 
 var
   ScreenWidth  : Byte = 80;
-  ScreenHeight : Byte = 50;
+  ScreenHeight : Byte = 25;
   ScreenPointer: PWord;
   Offset       : Word = 0;
   CursorX      : ShortInt = 0;
