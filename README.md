@@ -3,7 +3,7 @@
 A small text editor for DOS real mode, written in Free Pascal. The project is meant to bring back memories of the old DOS days.
 
 ### Features
-- Fast enough to run on 8086 machine
+- Fast enough to run on 8088 machine
 - Supports Long File Names (thanks to Free Pascal)
 - Strings larger than 255 bytes (thanks to Free Pascal, although we limit it to 16KB)
 - Handle file bigger than 64KB
