@@ -36,6 +36,7 @@ procedure RenderEditScrollUp;
 procedure RenderEditScrollDown;
 procedure RenderEditScrollLeft(const IsSingleLine: Boolean);
 procedure RenderEditScrollRight(const IsSingleLine: Boolean);
+procedure WaitForRetrace;
 
 implementation
 
@@ -44,6 +45,34 @@ uses
 
 var
   OldStatusCursorPosition: Byte = 0;
+  IsCGA: Byte = 0;
+
+procedure DetectCGA; assembler; nostackframe;
+asm
+  mov ah,$12
+  mov bl,$10
+  int $10
+  cmp bl,4
+  jle @NotCGA
+  mov IsCGA,1
+@NotCGA:
+end;
+
+procedure WaitForRetrace; assembler; nostackframe;
+asm
+  test IsCGA,1
+  jz @E
+  mov dx,$03DA
+@L1:
+  in al,dx
+  test al,8
+  jnz @L1
+@L2:
+  in al,dx
+  test al,8
+  jz @L2
+@E:
+end;
 
 procedure SetMode80x50;
 begin
@@ -334,6 +363,7 @@ begin
 end;
 
 initialization
+  DetectCGA;
   ScreenPointer := Ptr($B800, $0000);
 
 end.

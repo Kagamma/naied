@@ -9,7 +9,6 @@ var
   I: Byte;
 
 begin
-  SetMode80x25;
   if ParamCount > 0 then
   begin
     for I := 1 to ParamCount do
@@ -19,10 +18,13 @@ begin
           begin
             Writeln('Usage: naied.exe [options] <file name>');
             Writeln(' -h: This help screen');
-            Writeln(' -m4025: Switch to text mode 40x25');
+            Writeln(' -m4025: Switch to text mode 40x25');  
+            Writeln(' -m8025: Switch to text mode 80x25');
             Writeln(' -m8050: Switch to text mode 80x50');
             Halt;
           end;
+        '-m8025':
+          SetMode80x25;
         '-m8050':
           SetMode80x50; 
         '-m4025':
