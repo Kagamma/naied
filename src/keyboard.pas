@@ -187,10 +187,16 @@ asm
   int $16
 end;
 
-function SetFastTypematicRate: Word; assembler; nostackframe;
+procedure SetFastTypematicRate; assembler; nostackframe;
 asm
   mov ax,$0305
   xor bx,bx
+  int $16
+end;
+
+procedure SetDefaultTypematicRate; assembler; nostackframe;
+asm
+  mov ax,$0300
   int $16
 end;
 
@@ -224,6 +230,7 @@ initialization
 
 finalization
   SetIntVec($23, OldCtrlBreakHandle);
+  SetDefaultTypematicRate;
 
 end.
 
