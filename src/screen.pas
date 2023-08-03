@@ -219,7 +219,7 @@ begin
   Src := ScreenPointer + ScreenWidth;
   Dst := ScreenPointer + ScreenWidth * 2;
   Size := ScreenWidth * 2;
-  Move(Src[0], Dst[0], Size * (ScreenHeight - 3));
+  Move(Src[0], Dst[0], Size * (ScreenHeight - 2));
   RenderEdit(True, False, False);
 end;
 
