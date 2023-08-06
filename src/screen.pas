@@ -379,5 +379,9 @@ initialization
   DetectCGA;
   ScreenPointer := Ptr($B800, $0000);
 
+finalization
+  FillWord(ScreenPointer[0], ScreenWidth * ScreenHeight, $0700);
+  SetCursorPosition(0, 0);
+
 end.
 

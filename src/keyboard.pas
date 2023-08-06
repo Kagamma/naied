@@ -157,9 +157,9 @@ type
 function WaitForInput: Word;
 function HasKey: Word;
 function GetFlags: Byte;
-function IsCtrl(const Flags: Byte): Boolean;
-function IsAlt(const Flags: Byte): Boolean;
-function IsShift(const Flags: Byte): Boolean;
+function IsCtrl(const Flags: Byte): ByteBool;
+function IsAlt(const Flags: Byte): ByteBool;
+function IsShift(const Flags: Byte): ByteBool;
 
 implementation
 
@@ -200,19 +200,19 @@ asm
   int $16
 end;
 
-function IsCtrl(const Flags: Byte): Boolean; assembler;
+function IsCtrl(const Flags: Byte): ByteBool; assembler;
 asm
   mov al,Flags
   and al,$4
 end;
 
-function IsAlt(const Flags: Byte): Boolean; assembler;
+function IsAlt(const Flags: Byte): ByteBool; assembler;
 asm
   mov al,Flags
   and al,$8
 end;
 
-function IsShift(const Flags: Byte): Boolean; assembler;
+function IsShift(const Flags: Byte): ByteBool; assembler;
 asm
   mov al,Flags
   and al,$3
