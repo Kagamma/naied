@@ -183,5 +183,8 @@ end;
 initialization
   ClipboardPtr := GetMem(CLIPBOARD_SIZE);
 
+finalization
+  Freemem(ClipboardPtr);
+
 end.
 

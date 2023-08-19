@@ -163,5 +163,8 @@ end;
 initialization
   Init;
 
+finalization
+  Free;
+
 end.
 
