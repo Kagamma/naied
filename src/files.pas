@@ -10,6 +10,7 @@ uses
 procedure Open(const Path: String);
 procedure Save;
 function Exists(const Path: String): Boolean;
+function IsValidName(const AName: String): Boolean;
 
 implementation
 
@@ -107,6 +108,23 @@ begin
   CloseFile(F);
   WorkingFile := B;
   Screen.RenderStatusBar;
+end;
+
+function IsValidName(const AName: String): Boolean;
+var
+  C: Char;
+  DotCount: Byte = 0;
+begin
+  Result := True;
+  for C in AName do
+  begin
+    if not (C in ['A'..'Z', 'a'..'z', '0'..'9', '.', '!', '#', '$', '%', '&', '(', ')', '-', '@', '^', '_', '`', '{', '}', '~']) then
+      Exit(False);
+    if C = '.' then
+      Inc(DotCount);
+    if DotCount > 1 then
+      Exit(False);
+  end;
 end;
 
 end.

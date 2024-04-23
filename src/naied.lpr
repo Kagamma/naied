@@ -18,7 +18,7 @@ begin
           begin
             Writeln('Usage: naied.exe [options] <file name>');
             Writeln(' -h: This help screen');
-            Writeln(' -m4025: Switch to text mode 40x25');  
+            Writeln(' -m4025: Switch to text mode 40x25');
             Writeln(' -m8025: Switch to text mode 80x25');
             Writeln(' -m8050: Switch to text mode 80x50');
             Halt;
@@ -26,12 +26,12 @@ begin
         '-m8025':
           SetMode80x25;
         '-m8050':
-          SetMode80x50; 
+          SetMode80x50;
         '-m4025':
           SetMode40x25;
       end;
     end;
-    if Files.Exists(ParamStr(ParamCount)) then
+    if Files.Exists(ParamStr(ParamCount)) or Files.IsValidName(ParamStr(ParamCount)) then
       Files.Open(ParamStr(ParamCount))
     else
       Files.Open('NONAME.TXT');
