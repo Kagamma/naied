@@ -24,9 +24,11 @@ var
   AttrTrailing : Word = $4700;
   AttrSelect   : Word = $7000;
 
+{$ifndef NO_INT10H}
 procedure SetMode80x50;
 procedure SetMode80x25;
 procedure SetMode40x25;
+{$endif}
 procedure SetCursorPosition(const X, Y: Byte);
 function RenderTextAtLeft(const X, Y: Byte; const S: String): Byte;
 function RenderTextAtRight(const X, Y: Byte; const S: String): Byte;
@@ -40,7 +42,7 @@ procedure RenderEditScrollUp;
 procedure RenderEditScrollDown;
 procedure RenderEditScrollLeft(const IsSingleLine: Boolean);
 procedure RenderEditScrollRight(const IsSingleLine: Boolean);
-procedure WaitForRetrace;
+procedure WriteText(const X, Y, Attr: Byte; const S: String);
 
 implementation
 
@@ -49,35 +51,19 @@ uses
 
 var
   OldStatusCursorPosition: Byte = 0;
-  IsCGA: Byte = 0;
 
-procedure DetectCGA; assembler; nostackframe;
-asm
-  mov ah,$12
-  mov bl,$10
-  int $10
-  cmp bl,4
-  jle @NotCGA
-  mov IsCGA,1
-@NotCGA:
+{$ifdef NO_INT10H}
+procedure SetCursorPosition(const X, Y: Byte);
+var
+  P: Word;
+begin
+  P := Y * 80 + X;
+  Port[$3D4] := $E;
+  Port[$3D5] := Byte((P shr 8) and $FF);
+  Port[$3D4] := $F;
+  Port[$3D5] := Byte(P and $FF);
 end;
-
-procedure WaitForRetrace; assembler; nostackframe;
-asm
-  test IsCGA,1
-  jz @E
-  mov dx,$03DA
-@L1:
-  in al,dx
-  test al,8
-  jnz @L1
-@L2:
-  in al,dx
-  test al,8
-  jz @L2
-@E:
-end;
-
+{$else}
 procedure SetMode80x50;
 begin
   if ScreenMode = sm80x50 then
@@ -114,7 +100,7 @@ begin
     xor ax,ax
     xor bl,bl
     int $10
-  end;  
+  end;
   ScreenMode := sm40x25;
   ScreenWidth := 40;
   ScreenHeight := 25;
@@ -128,6 +114,7 @@ asm
   xor bh,bh
   int $10
 end;
+{$endif}
 
 function RenderTextAtLeft(const X, Y: Byte; const S: String): Byte;
 var
@@ -375,8 +362,27 @@ begin
   end;
 end;
 
+procedure WriteText(const X, Y, Attr: Byte; const S: String);
+var
+  I: Word;
+  P: PWord;
+  W: Word;
+  MaxLen: Word;
+begin
+  MaxLen := Length(S);
+  P := ScreenPointer + (80 * Y + X);
+  W := Attr shl 8;
+  for I := 1 to MaxLen do
+  begin
+    if I <= Length(S) then
+      P^ := W + Byte(S[I])
+    else
+      P^ := W;
+    Inc(P);
+  end;
+end;
+
 initialization
-  DetectCGA;
   ScreenPointer := Ptr($B800, $0000);
 
 finalization

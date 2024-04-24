@@ -60,8 +60,8 @@ end;
 procedure WriteCommand(const S: String);
 begin
   Screen.RenderStatusBarBlank;
-  Screen.SetCursorPosition(0, 0);
-  Write(S);
+  Screen.SetCursorPosition(Length(S), 0);
+  Screen.WriteText(0, 0, AttrStatus shr 8, S);
   CursorX := Length(S);
 end;
 

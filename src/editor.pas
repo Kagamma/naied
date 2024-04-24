@@ -696,12 +696,16 @@ begin
         'y':
           begin
             Files.Save;
+            {$ifndef NO_INT10H}
             SetMode80x25;
+            {$endif}
             Halt;
           end;
         'n':
           begin
+            {$ifndef NO_INT10H}
             SetMode80x25;
+            {$endif}
             Halt;
           end;
       end;
